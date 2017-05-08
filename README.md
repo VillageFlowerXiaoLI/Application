@@ -12,7 +12,7 @@
 * /static/            向用户展示的静态文件(css,img,ext)
 
 # 数据库格式说明文档
-## 用户资料
+## users
 * id integer identity(1,1),
 * username text not null,
 * password text not null,

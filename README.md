@@ -13,11 +13,15 @@
 
 # 数据库格式说明文档
 ## 用户资料
-* id
-* 用户名
-* 密码
-* 绑定信息(邮箱，手机号..)
-* 头像，签名，昵称，微信二维码等自定义信息
+* id integer identity(1,1),
+* username text not null,
+* password text not null,
+* nickname text not null,
+* sex text,
+* birthday text,
+* email text,
+* phone_number text not null,
+* head_img text,
 ## 文章信息
 * id
 * 作者

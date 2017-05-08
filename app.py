@@ -3,6 +3,7 @@
 from flask import Flask, url_for, redirect, flash, session, request, render_template, g
 import sqlite3
 import os
+from copy import deepcopy
 
 app = Flask(__name__)
 
@@ -36,7 +37,7 @@ def confirm_user(username, password, db):
     result = cursor.execute(sql, (username,))
     user = result.fetchall()
 
-    if len(user) == 0:
+    if not user:
         return (False, None)
     elif password == user[0][2]:
         return (True, user[0][0])
@@ -65,6 +66,22 @@ def get_user_info(user_id, db):
         user_dict['phnoe_number'] = user_info[0][7]
         user_dict['head_img'] = user_info[0][8]
         return user_dict
+
+
+# 检查用户注册信息是否合法,合法就入库,返回id,不合法返回None
+def check_register_info(form, db):
+    user_dict = {}
+    '''
+    # user_dict['id'] = user_info[0][0]
+    user_dict['username'] = user_info[0][1]
+    # user_dict['password'] = user_info[0][2]
+    user_dict['nickname'] = user_info[0][3]
+    user_dict['sex'] = user_info[0][4]
+    user_dict['birthday'] = user_info[0][5]
+    user_dict['email'] = user_info[0][6]
+    user_dict['phnoe_number'] = user_info[0][7]
+    user_dict['head_img'] = user_info[0][8]
+    '''
 
 
 @app.route('/server_shutdown')
@@ -106,6 +123,25 @@ def logout():
     session.pop('user_id', None)
     flash('登出成功')
     return redirect(url_for('home_page'))
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if not hasattr(g, 'db'):
+        g.db = connect_db()
+
+    if request.method == 'POST':
+        user_id = check_register_info(deepcopy(request.form), g.db)
+        if user_id:
+            session['logged_in'] = True
+            session['user_id'] = user_id
+            flash('注册成功')
+            return redirect(url_for('home_page'))
+        else:
+            flash('注册失败')
+            return redirect(url_for('register'))
+
+    return render_template('register.html')
 
 
 @app.route('/articles')

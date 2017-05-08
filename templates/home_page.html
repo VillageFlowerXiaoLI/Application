@@ -1,2 +1,7 @@
 <!doctype html>
-<a href="{{ url_for('login') }}">login</a>
+{% if session.logged_in %}
+<a href="/user/{{ session.user_id }}">我的资料</a>
+<a href="{{ url_for('logout') }}">登出</a>
+{% else %}
+<a href="{{ url_for('login') }}">登录</a>
+{% endif %}

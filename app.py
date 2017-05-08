@@ -63,14 +63,14 @@ def get_user_info(user_id, db):
         user_dict['sex'] = user_info[0][4]
         user_dict['birthday'] = user_info[0][5]
         user_dict['email'] = user_info[0][6]
-        user_dict['phnoe_number'] = user_info[0][7]
+        user_dict['phone_number'] = user_info[0][7]
         user_dict['head_img'] = user_info[0][8]
         return user_dict
 
 
-# 检查用户注册信息是否合法,合法就入库,返回id,不合法返回None
+# 检查用户注册信息是否合法,合法就入库,返回id+err_info(None),不合法返回None+err_info
 def check_register_info(form, db):
-    user_dict = {}
+    print '注册...'
     '''
     # user_dict['id'] = user_info[0][0]
     user_dict['username'] = user_info[0][1]
@@ -82,6 +82,7 @@ def check_register_info(form, db):
     user_dict['phnoe_number'] = user_info[0][7]
     user_dict['head_img'] = user_info[0][8]
     '''
+    raise
 
 
 @app.route('/server_shutdown')
@@ -168,9 +169,6 @@ def user_space(user_id):
         g.db = connect_db()
 
     user_dict = get_user_info(user_id, g.db)
-
-    print user_id
-    print user_dict
 
     if user_dict:
         return render_template('user_space.html', user_dict=user_dict)

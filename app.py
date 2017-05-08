@@ -70,19 +70,28 @@ def get_user_info(user_id, db):
 
 # 检查用户注册信息是否合法,合法就入库,返回id+err_info(None),不合法返回None+err_info
 def check_register_info(form, db):
-    print '注册...'
-    '''
-    # user_dict['id'] = user_info[0][0]
-    user_dict['username'] = user_info[0][1]
-    # user_dict['password'] = user_info[0][2]
-    user_dict['nickname'] = user_info[0][3]
-    user_dict['sex'] = user_info[0][4]
-    user_dict['birthday'] = user_info[0][5]
-    user_dict['email'] = user_info[0][6]
-    user_dict['phnoe_number'] = user_info[0][7]
-    user_dict['head_img'] = user_info[0][8]
-    '''
-    raise
+    cursor = db.cursor()
+    sql_username = 'select username from users where username=?'
+    username = cursor.execute(sql_username, (form['username'],)).fetchall()
+    if username:
+        return (None, '用户名已存在')
+    username = form['username']
+    '''加一个功能 判断密码是否安全'''
+    password = form['password']
+    confirm_password = form['confirm_password']
+    if password != confirm_password:
+        return (None, '两次输入的密码不一致')
+    nickname = form['nickname']
+    sex = form['sex']
+    birthday = form.get('birthday', 'NULL')
+    email = form.get('email', 'NULL')
+    phone_number = form['phone_number']
+
+    sql = 'insert into users (username,password,nickname,sex,birthday,email,phone_number) values (?,?,?,?,?,?,?)'
+    cursor.execute(sql, (username, password, nickname, sex, birthday, email, phone_number))
+    db.commit()
+    id = cursor.execute('select id from users where username=?', (username,)).fetchall()[0][0]
+    return (id, None)
 
 
 @app.route('/server_shutdown')
@@ -128,21 +137,22 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    error_info = ''
     if not hasattr(g, 'db'):
         g.db = connect_db()
 
     if request.method == 'POST':
-        user_id = check_register_info(deepcopy(request.form), g.db)
+        user_id, error_info = check_register_info(deepcopy(request.form), g.db)
         if user_id:
             session['logged_in'] = True
             session['user_id'] = user_id
             flash('注册成功')
             return redirect(url_for('home_page'))
         else:
-            flash('注册失败')
+            flash(error_info)
             return redirect(url_for('register'))
 
-    return render_template('register.html')
+    return render_template('register.html', error_info=error_info)
 
 
 @app.route('/articles')

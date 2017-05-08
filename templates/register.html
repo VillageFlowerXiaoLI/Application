@@ -1,13 +1,16 @@
 <form action="{{ url_for('register') }}" method=POST>
-	username:<input type=text name=username><br/>
-	password:<input type=password name=password><br/>
-	confirm password:<input type=password name="confirm_password" ><br/>
-	nickname:<input type=text name=nickname><br/>
+	username:<input type=text name=username placeholder="必填"><br/>
+	password:<input type=password name=password placeholder="必填"><br/>
+	confirm password:<input type=password name="confirm_password" placeholder="必填"><br/>
+	nickname:<input type=text name=nickname placeholder="必填"><br/>
 	sex:<br/>
 		male<input type=radio checked=checked name=sex value=male /><br/>
 		female<input type=radio name=sex value=female /><br/>
 	birthday:<input type=text name=birthday><br/>
 	email:<input type=text name=email><br/>
-	phone number:<input type=text name="phone_number"><br/>
+	phone number:<input type=text name="phone_number" placeholder="必填"><br/>
 	<input type=submit text=submit>
 </form>
+{% if not error_info %}
+<p>{{ error_info }}</p>
+{% endif %}

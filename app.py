@@ -150,7 +150,7 @@ def register():
             flash(session['error_info'])
             return redirect(url_for('register'))
 
-    return render_template('register.html', error_info=session.get('error_info', None))
+    return render_template('register.html', error_info=session.get('error_info', ''))
 
 
 @app.route('/articles')

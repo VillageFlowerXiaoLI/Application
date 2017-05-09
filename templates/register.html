@@ -11,6 +11,4 @@
 	phone number:<input type=text name="phone_number" placeholder="必填"><br/>
 	<input type=submit text=submit>
 </form>
-{% if not error_info %}
-<p>{{ error_info }}</p>
-{% endif %}
+{{ error_info }}

@@ -74,13 +74,12 @@ def check_register_info(form, db):
     sql_username = 'select username from users where username=?'
     username = cursor.execute(sql_username, (form['username'],)).fetchall()
     if username:
-        return (None, '用户名已存在')
+        return (None, u'用户名已存在')
     username = form['username']
-    '''加一个功能 判断密码是否安全'''
     password = form['password']
     confirm_password = form['confirm_password']
     if password != confirm_password:
-        return (None, '两次输入的密码不一致')
+        return (None, u'两次输入的密码不一致')
     nickname = form['nickname']
     sex = form['sex']
     birthday = form.get('birthday', 'NULL')
@@ -137,22 +136,21 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    error_info = ''
     if not hasattr(g, 'db'):
         g.db = connect_db()
-
     if request.method == 'POST':
-        user_id, error_info = check_register_info(deepcopy(request.form), g.db)
+        user_id, session['error_info'] = check_register_info(deepcopy(request.form), g.db)
         if user_id:
             session['logged_in'] = True
             session['user_id'] = user_id
+            del session['error_info']
             flash('注册成功')
             return redirect(url_for('home_page'))
         else:
-            flash(error_info)
+            flash(session['error_info'])
             return redirect(url_for('register'))
 
-    return render_template('register.html', error_info=error_info)
+    return render_template('register.html', error_info=session.get('error_info', None))
 
 
 @app.route('/articles')

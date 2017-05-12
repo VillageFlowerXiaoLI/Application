@@ -1,6 +1,6 @@
 # 应用文件层次说明文档
 ## Application
-* /__init__.py        应用初始化
+* /\_\_init\_\_.py        应用初始化
 * /requirements.txt   依赖库列表
 * /config.py          配置名称，变量列表
 * /instance/config.py 私密配置项
